@@ -144,7 +144,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     }
 
     setState(() {
-      number1 = result.toStringAsPrecision(3);
+      number1 = result.toStringAsPrecision(9);
       bool isZero = true ;
       int cnt = 0 , i = number1.length - 1 ;
       while(i >= 0 && number1[i] != '.'){
