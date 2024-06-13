@@ -1,5 +1,6 @@
 import 'package:basic_calculator/button_values.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -144,9 +145,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
     setState(() {
       number1 = result.toStringAsPrecision(3);
-
-      if (number1.endsWith(".0")) {
-        number1 = number1.substring(0, number1.length - 2);
+      bool isZero = true ;
+      int cnt = 0 , i = number1.length - 1 ;
+      while(i >= 0 && number1[i] != '.'){
+        if(number1[i] != "0") {
+          isZero = false ;
+          break ;
+        }
+        cnt++ ;
+        i-- ;
+      }
+      log('data: $cnt $isZero &i');
+      if(isZero){
+        number1 = number1.substring(0, number1.length - cnt - 1);
       }
 
       operand = "";
@@ -209,22 +220,37 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
     // if is operand and not "."
     if (value != Btn.dot && int.tryParse(value) == null) {
+      if(number1.isEmpty && value == Btn.subtract){
+        if(value == Btn.subtract){
+          log('ApppendValue : $number1 subtract value entry');
+          if (number1.contains(Btn.subtract)) {
+            return;
+          } else{
+            value = "-" ;
+          }
+        }
+        number1 += value ;
+      }
       // operand pressed
-      if (operand.isNotEmpty && number2.isNotEmpty) {
+      else if (operand.isNotEmpty && number2.isNotEmpty) {
         // TODO calculate the equation before assigning new operand
         calculate();
       }
-      operand = value;
+      else operand = value;
     }
     // assign value to number1 variable
     else if (number1.isEmpty || operand.isEmpty) {
       // check if value is "." | ex: number1 = "1.2"
-      if (value == Btn.dot && number1.contains(Btn.dot)) return;
-      if (value == Btn.dot && (number1.isEmpty || number1 == Btn.n0)) {
-        // ex: number1 = "" | "0"
-        value = "0.";
+      if(value == Btn.dot){
+        log('ApppendValue : $number1 dot value entry');
+        if (number1.contains(Btn.dot)) return;
+        if (value == Btn.dot && (number1.isEmpty || number1 == Btn.n0)){
+          value = "0.";
+        }
       }
       number1 += value;
+      log('Apppend : $number1');
+
     }
     // assign value to number2 variable
     else if (number2.isEmpty || operand.isNotEmpty) {
